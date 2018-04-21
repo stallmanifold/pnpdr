@@ -1,0 +1,6 @@
+.venv
+*.pyc
+*.sqllite3
+__pycache__
+database
+
