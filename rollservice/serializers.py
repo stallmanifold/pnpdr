@@ -4,6 +4,7 @@ from django.contrib.auth.models import User
 
 
 class DiceSequenceSerializer(serializers.HyperlinkedModelSerializer):
+    owner = serializers.ReadOnlyField(source='owner.username')
     dice_sequence = serializers.PrimaryKeyRelatedField(many=True, queryset=DiceSequence.objects.all())
 
     class Meta:
@@ -12,10 +13,18 @@ class DiceSequenceSerializer(serializers.HyperlinkedModelSerializer):
 
 
 class RollSequenceSerializer(serializers.HyperlinkedModelSerializer):
+    owner = serializers.ReadOnlyField(source='owner.username')
     roll_sequence = serializers.PrimaryKeyRelatedField(many=True, queryset=RollSequence.objects.all())
 
     class Meta:
         model = RollSequence
-        fields = ('url', 'id', 'username', 'roll_sequence')
+        fields = ('url', 'id', 'owner', 'roll_sequence')
 
+
+class UserSerializer(serializers.ModelSerializer):
+    dice_sequence = serializers.PrimaryKeyRelatedField(many=True, queryset=DiceSequence.objects.all())
+
+    class Meta:
+        model = User
+        fields = ('url', 'id', 'username', 'dice_sequence')
 
