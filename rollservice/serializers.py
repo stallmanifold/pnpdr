@@ -8,7 +8,7 @@ class DiceSequenceSerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = DiceSequence
-        fields = ('url', 'id', 'username', 'dice_sequence')
+        fields = ('url', 'id', 'owner', 'dice_sequence')
 
 
 class RollSequenceSerializer(serializers.HyperlinkedModelSerializer):
