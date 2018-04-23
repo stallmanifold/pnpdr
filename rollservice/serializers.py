@@ -1,10 +1,10 @@
 from rest_framework import serializers
-import rollservice.models
+from rollservice import DiceSequence, RollSequence
 from django.contrib.auth.models import User
 
 
 class DiceSequenceSerializer(serializers.HyperlinkedModelSerializer):
-    die_sequence = serializers.PrimaryKeyRelatedField(many=True, queryset=DieSequence.objects.all())
+    dice_sequence = serializers.PrimaryKeyRelatedField(many=True, queryset=DiceSequence.objects.all())
 
     class Meta:
         model = rollservice.models.DiceSequence
