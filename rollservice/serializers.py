@@ -28,3 +28,13 @@ class UserSerializer(serializers.ModelSerializer):
         model = User
         fields = ('url', 'id', 'username', 'dice_sequence')
 
+
+class HistorySerializer(serializers.HyperlinkedModelSerializer):
+    owner = serializers.ReadOnlyField(source='owner.username')
+    roll_sequence = serializers.PrimaryKeyRelatedField(many=True, queryset=RollSequence.objects.all())
+    dice_sequence = serializers.PrimaryKeyRelatedField(many=True, queryset=DiceSequence.objects.all())
+
+    class Meta:
+        model = User
+        fields = ('url', 'id', 'username', 'dice_sequence', 'roll_sequence')
+
