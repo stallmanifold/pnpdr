@@ -22,3 +22,6 @@ class RollSequence(models.Model):
     roll_sequence = models.ManyToManyField(Roll)
     dice_sequence = models.ForeignKey(DiceSequence, related_name='+', on_delete=models.PROTECT)
 
+    class Meta:
+        ordering = ('created',)
+

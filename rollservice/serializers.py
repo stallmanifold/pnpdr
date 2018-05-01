@@ -5,7 +5,7 @@ from django.contrib.auth.models import User
 
 class DiceSequenceSerializer(serializers.HyperlinkedModelSerializer):
     owner = serializers.ReadOnlyField(source='owner.username')
-    dice_sequence = serializers.PrimaryKeyRelatedField(many=True, queryset=DiceSequence.objects.all())
+    dice_sequence = serializers.HyperlinkedIdentityField(many=True, view_name='dice-seq', read_only=True)
 
     class Meta:
         model = DiceSequence
@@ -14,15 +14,15 @@ class DiceSequenceSerializer(serializers.HyperlinkedModelSerializer):
 
 class RollSequenceSerializer(serializers.HyperlinkedModelSerializer):
     owner = serializers.ReadOnlyField(source='owner.username')
-    roll_sequence = serializers.PrimaryKeyRelatedField(many=True, queryset=RollSequence.objects.all())
+    roll_sequence = serializers.HyperlinkedIdentityField(many=True, view_name='roll-seq', read_only=True)
 
     class Meta:
         model = RollSequence
         fields = ('url', 'id', 'owner', 'roll_sequence')
 
 
-class UserSerializer(serializers.ModelSerializer):
-    dice_sequence = serializers.PrimaryKeyRelatedField(many=True, queryset=DiceSequence.objects.all())
+class UserSerializer(serializers.HyperlinkedModelSerializer):
+    dice_sequence = serializers.HyperlinkedIdentityField(many=True, view_name='dice-seq', read_only=True)
 
     class Meta:
         model = User
@@ -31,8 +31,8 @@ class UserSerializer(serializers.ModelSerializer):
 
 class HistorySerializer(serializers.HyperlinkedModelSerializer):
     owner = serializers.ReadOnlyField(source='owner.username')
-    roll_sequence = serializers.PrimaryKeyRelatedField(many=True, queryset=RollSequence.objects.all())
-    dice_sequence = serializers.PrimaryKeyRelatedField(many=True, queryset=DiceSequence.objects.all())
+    roll_sequence = serializers.HyperlinkedIdentityField(many=True, view_name='roll-seq', read_only=True)
+    dice_sequence = serializers.HyperlinkedIdentityField(many=True, view_name='dice-seq', read_only=True)
 
     class Meta:
         model = User
