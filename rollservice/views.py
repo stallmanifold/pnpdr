@@ -20,6 +20,8 @@ def api_root(request, format=None):
     return Response({
         'message': 'REST API routes',
         'users': reverse('user-list', request=request, format=format),
+        'dice sequences': reverse('dice-seq', request=request, format=format),
+        'rolls': reverse('roll-seq', request=request, format=format),
     })
 
 
