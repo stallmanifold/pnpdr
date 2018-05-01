@@ -1,7 +1,9 @@
 from django.conf.urls import url
 from rest_framework.urlpatterns import format_suffix_patterns
+from rest_framework.schemas import get_schema_view
 from rollservice import views
 
+schema_view = get_schema_view(title='PNP Die Roller API')
 
 urlpatterns = format_suffix_patterns([
     url(r'^$', views.api_root),
@@ -21,5 +23,6 @@ urlpatterns = format_suffix_patterns([
         views.UserDetail.as_view(), 
         name='user-detail'
     ),
+    url(r'^schema/$', schema_view),
 ])
 
