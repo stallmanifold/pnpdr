@@ -10,7 +10,7 @@ class Roll(models.Model):
 
 
 class DiceSequence(models.Model):
-    name = models.CharField(max_length=256)
+    seq_name = models.CharField(max_length=256)
     created = models.DateTimeField(auto_now_add=True)
     owner = models.ForeignKey('auth.User',  related_name='dice_sequence', on_delete=models.CASCADE)
     sequence = models.ManyToManyField(Dice)
