@@ -3,25 +3,28 @@ from rollservice.models import Dice, DiceSequence, RollSequence
 from django.contrib.auth.models import User
 
 
-class DiceSequenceSerializer(serializers.HyperlinkedModelSerializer):
+class DiceSequenceSerializer(serializers.Serializer):
     owner = serializers.ReadOnlyField(source='owner.username')
     seq_name = serializers.CharField(max_length=256)
     dice_sequence = serializers.ListField(child=serializers.IntegerField())
 
     def create(self, validated_data):
         seq_name = validated_data.get('seq_name', None)
-        owner = validated_data.get('owner', None)
-
+        owner = self.context['request'].user
+        
         values = validated_data.get('dice_sequence')
         dice_saved = []
         for value in values:
-            dice_saved.append(Dice(sides=value))
-        
-        dice_list = Dice.objects.bulk_create(dice_saved)
-        dice_sequence = DiceSequence.objects.create(seq_name=seq_name, owner=owner)
-        dice_sequence.related_set.set(dice_list)
+            dice_saved.append(Dice.objects.create(sides=value))
 
-        return dice_sequence
+        dice_sequence = DiceSequence.objects.create(seq_name=seq_name, owner=owner)
+        dice_sequence.sequence.set(dice_saved)
+
+        self.owner = owner
+        self.seq_name = seq_name
+        self.dice_sequence = values
+
+        return self
 
 
     class Meta:
