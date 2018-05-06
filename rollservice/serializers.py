@@ -38,22 +38,16 @@ class DiceSequenceSerializer(serializers.Serializer):
     def create(self, validated_data):
         seq_name = validated_data.get('seq_name', None)
         owner = self.context['request'].user
-        
         values = validated_data.get('dice_sequence')
-        dice_saved = []
-        for value in values:
-            dice_saved.append(Dice.objects.create(sides=value))
+        dice_saved = [Dice.objects.create(sides=value) for value in values]
 
         dice_sequence = DiceSequence.objects.create(seq_name=seq_name, owner=owner)
         dice_sequence.sequence.set(dice_saved)
         uuid = dice_sequence.uuid
 
-        self.owner = owner
-        self.seq_name = seq_name
-        self.dice_sequence = values
-        self.uuid = uuid
+        data = DiceSequenceData(uuid, owner, seq_name, values)
 
-        return self
+        return data
 
 
 class RollSequenceSerializer(serializers.HyperlinkedModelSerializer):
