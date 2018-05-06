@@ -4,6 +4,13 @@ from rollservice.models import Dice, DiceSequence, RollSequence
 from django.contrib.auth.models import User
 
 
+class DiceSequenceData:
+    def __init__(self, uuid, owner, seq_name, dice_sequence):
+        self.uuid = uuid
+        self.owner = owner
+        self.seq_name = seq_name
+        self.dice_sequence = dice_sequence
+
 
 class DiceSequenceByUUIDSerializer(serializers.Serializer):
     uuid = serializers.UUIDField()

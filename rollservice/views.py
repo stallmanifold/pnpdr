@@ -12,6 +12,7 @@ from rest_framework import status
 
 from rollservice.models import DiceSequence
 from rollservice.models import RollSequence
+from rollservice.serializers import DiceSequenceData
 from rollservice.serializers import DiceSequenceSerializer
 from rollservice.serializers import DiceSequenceByUUIDSerializer
 from rollservice.serializers import RollSequenceSerializer
@@ -27,13 +28,6 @@ def api_root(request, format=None):
         'dice sequences': reverse('dice-seq', request=request, format=format),
         'rolls': reverse('roll-seq', request=request, format=format),
     })
-
-class DiceSequenceData:
-    def __init__(self, uuid, owner, seq_name, dice_sequence):
-        self.uuid = uuid
-        self.owner = owner
-        self.seq_name = seq_name
-        self.dice_sequence = dice_sequence
 
 
 class DiceSequenceByUUID(generics.RetrieveAPIView):
