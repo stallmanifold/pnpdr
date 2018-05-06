@@ -12,7 +12,7 @@ class DiceSequenceByUUIDSerializer(serializers.Serializer):
         model = DiceSequence
         fields = ('uuid', 'dice_sequence')
 
-    def get(self, validated_data):
+    def read(self, validated_data):
         uuid = validated_data['uuid']
         dice_sequence = DiceSequence.objects.filter(uuid=uuid).first()
 
