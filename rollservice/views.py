@@ -42,7 +42,7 @@ class DiceSequenceByUUID(generics.RetrieveAPIView):
     lookup_field = 'uuid'
 
     def get(self, request, uuid, format=None):
-        entry = self.get_queryset().filter(uuid__exact=uuid).first()
+        entry = self.get_queryset().get(uuid__exact=uuid)
         owner = entry.owner
         seq_name = entry.seq_name
         dice_sequence = [dice.sides for dice in entry.sequence.all()]
