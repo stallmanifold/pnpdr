@@ -27,12 +27,29 @@ def api_root(request, format=None):
         'rolls': reverse('roll-seq', request=request, format=format),
     })
 
+class DiceSequenceData:
+    def __init__(self, uuid, owner, seq_name, dice_sequence):
+        self.uuid = uuid
+        self.owner = owner
+        self.seq_name = seq_name
+        self.dice_sequence = dice_sequence
+
 
 class DiceSequenceByUUID(generics.RetrieveAPIView):
     queryset = DiceSequence.objects.all()
     serializer_class = DiceSequenceByUUIDSerializer
     permission_classes = (permissions.IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly)
     lookup_field = 'uuid'
+
+    def get(self, request, uuid, format=None):
+        entry = self.get_queryset().filter(uuid__exact=uuid).first()
+        owner = entry.owner
+        seq_name = entry.seq_name
+        dice_sequence = [dice.sides for dice in entry.sequence.all()]
+        data = DiceSequenceData(uuid, owner, seq_name, dice_sequence)
+        serializer = DiceSequenceByUUIDSerializer(data)
+
+        return Response(serializer.data)
 
 
 class DiceSequenceList(generics.ListCreateAPIView):

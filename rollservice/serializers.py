@@ -4,22 +4,16 @@ from rollservice.models import Dice, DiceSequence, RollSequence
 from django.contrib.auth.models import User
 
 
+
 class DiceSequenceByUUIDSerializer(serializers.Serializer):
     uuid = serializers.UUIDField()
-    dice_sequence = serializers.ReadOnlyField()
+    owner = serializers.ReadOnlyField(source='owner.username')
+    seq_name = serializers.CharField(max_length=256)
+    dice_sequence = serializers.ListField(child=serializers.IntegerField())
 
     class Meta:
         model = DiceSequence
-        fields = ('uuid', 'dice_sequence')
-
-    def read(self, validated_data):
-        uuid = validated_data['uuid']
-        dice_sequence = DiceSequence.objects.filter(uuid=uuid).first()
-
-        self.uuid = uuid
-        self.dice_sequence = dice_sequence
-
-        return self
+        fields = ('uuid', 'owner', 'seq_name', 'dice_sequence')
 
 
 class DiceSequenceSerializer(serializers.Serializer):
