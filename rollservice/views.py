@@ -14,7 +14,6 @@ from rollservice.models import DiceSequence
 from rollservice.models import RollSequence
 from rollservice.serializers import DiceSequenceData
 from rollservice.serializers import DiceSequenceSerializer
-from rollservice.serializers import DiceSequenceByUUIDSerializer
 from rollservice.serializers import RollSequenceSerializer
 from rollservice.serializers import UserSerializer
 from rollservice.permissions import IsOwnerOrReadOnly
@@ -23,7 +22,7 @@ from rollservice.permissions import IsOwnerOrReadOnly
 @api_view(['GET'])
 def api_root(request, format=None):
     return Response({
-        'message': 'REST API routes',
+        'message': 'REST API Routes',
         'users': reverse('user-list', request=request, format=format),
         'dice sequences': reverse('dice-seq', request=request, format=format),
         'rolls': reverse('roll-seq', request=request, format=format),
@@ -32,7 +31,7 @@ def api_root(request, format=None):
 
 class DiceSequenceByUUIDView(generics.RetrieveAPIView):
     queryset = DiceSequence.objects.all()
-    serializer_class = DiceSequenceByUUIDSerializer
+    serializer_class = DiceSequenceSerializer
     permission_classes = (permissions.IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly)
     lookup_field = 'uuid'
 
@@ -50,19 +49,19 @@ class DiceSequenceByUUIDView(generics.RetrieveAPIView):
         seq_name = entry.seq_name
         dice_sequence = [dice.sides for dice in entry.sequence.all()]
         data = DiceSequenceData(uuid, owner, seq_name, dice_sequence)
-        serializer = DiceSequenceByUUIDSerializer(data)
+        serializer = DiceSequenceSerializer(data, context={'request': request})
 
         return Response(serializer.data)
 
 
 class DiceSequenceListByUUIDView(generics.ListAPIView):
     queryset = DiceSequence.objects.all()
-    serializer_class = DiceSequenceByUUIDSerializer(many=True)
+    serializer_class = DiceSequenceSerializer
     permission_classes = (permissions.IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly)
 
-    def list(self, request, format=None):
+    def list(self, request, *args, **kwargs):
         uuids = request.data['uuids'] if 'uuids' in request.data else None
-        return Response({'message': 'Request received', 'uuids': uuids})
+        return Response({'message': 'Request received', 'uuids': uuids, 'uuids received': len(uuids)})
 
 
 class DiceSequenceListView(generics.ListCreateAPIView):

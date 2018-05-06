@@ -12,22 +12,11 @@ class DiceSequenceData:
         self.dice_sequence = dice_sequence
 
 
-class DiceSequenceByUUIDSerializer(serializers.Serializer):
+class DiceSequenceSerializer(serializers.Serializer):
     uuid = serializers.UUIDField()
     owner = serializers.ReadOnlyField(source='owner.username')
     seq_name = serializers.CharField(max_length=256)
     dice_sequence = serializers.ListField(child=serializers.IntegerField())
-
-    class Meta:
-        model = DiceSequence
-        fields = ('uuid', 'owner', 'seq_name', 'dice_sequence')
-
-
-class DiceSequenceSerializer(serializers.Serializer):
-    owner = serializers.ReadOnlyField(source='owner.username')
-    seq_name = serializers.CharField(max_length=256)
-    dice_sequence = serializers.ListField(child=serializers.IntegerField())
-    uuid = serializers.ReadOnlyField()
     url = serializers.HyperlinkedIdentityField(lookup_field='uuid', view_name='dice-seq-by-uuid')
 
     class Meta:
