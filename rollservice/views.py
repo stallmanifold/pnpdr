@@ -30,7 +30,7 @@ def api_root(request, format=None):
     })
 
 
-class DiceSequenceByUUID(generics.RetrieveAPIView):
+class DiceSequenceByUUIDView(generics.RetrieveAPIView):
     queryset = DiceSequence.objects.all()
     serializer_class = DiceSequenceByUUIDSerializer
     permission_classes = (permissions.IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly)
@@ -39,9 +39,12 @@ class DiceSequenceByUUID(generics.RetrieveAPIView):
     def get(self, request, uuid, format=None):
         try:
             entry = self.get_queryset().get(uuid__exact=uuid)
-        except:
-            content = { 'uuid': uuid, 'message': 'Not Found' }
+        except DiceSequence.DoesNotExist:
+            content = { 'uuid': uuid, 'message': 'Resource does not exist' }
             return Response(content, status=status.HTTP_404_NOT_FOUND)
+        except:
+            content = { 'uuid': uuid, 'message': 'Invalid UUID' }
+            return Response(content, status=status.HTTP_400_BAD_REQUEST)
 
         owner = entry.owner
         seq_name = entry.seq_name
@@ -52,23 +55,33 @@ class DiceSequenceByUUID(generics.RetrieveAPIView):
         return Response(serializer.data)
 
 
-class DiceSequenceList(generics.ListCreateAPIView):
+class DiceSequenceListByUUIDView(generics.ListAPIView):
+    queryset = DiceSequence.objects.all()
+    serializer_class = DiceSequenceByUUIDSerializer(many=True)
+    permission_classes = (permissions.IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly)
+
+    def list(self, request, format=None):
+        uuids = request.data['uuids'] if 'uuids' in request.data else None
+        return Response({'message': 'Request received', 'uuids': uuids})
+
+
+class DiceSequenceListView(generics.ListCreateAPIView):
     queryset = DiceSequence.objects.all()
     serializer_class = DiceSequenceSerializer
     permission_classes = (permissions.IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly)
 
 
-class RollSequenceList(generics.ListAPIView):
+class RollSequenceListView(generics.ListAPIView):
     queryset = RollSequence.objects.all()
     serializer_class = RollSequenceSerializer
 
 
-class UserList(generics.ListAPIView):
+class UserListView(generics.ListAPIView):
     queryset = User.objects.all()
     serializer_class = UserSerializer
 
 
-class UserDetail(generics.RetrieveAPIView):
+class UserDetailView(generics.RetrieveAPIView):
     queryset = User.objects.all()
     serializer_class = UserSerializer
 
