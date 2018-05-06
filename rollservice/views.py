@@ -12,6 +12,7 @@ from rest_framework import permissions
 from rollservice.models import DiceSequence
 from rollservice.models import RollSequence
 from rollservice.serializers import DiceSequenceSerializer
+from rollservice.serializers import DiceSequenceByUUIDSerializer
 from rollservice.serializers import RollSequenceSerializer
 from rollservice.serializers import UserSerializer
 from rollservice.permissions import IsOwnerOrReadOnly
@@ -25,6 +26,13 @@ def api_root(request, format=None):
         'dice sequences': reverse('dice-seq', request=request, format=format),
         'rolls': reverse('roll-seq', request=request, format=format),
     })
+
+
+class DiceSequenceByUUID(generics.RetrieveAPIView):
+    queryset = DiceSequence.objects.all()
+    serializer_class = DiceSequenceByUUIDSerializer
+    permission_classes = (permissions.IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly)
+    lookup_field = 'uuid'
 
 
 class DiceSequenceList(generics.ListCreateAPIView):

@@ -1,3 +1,4 @@
+import uuid
 from django.db import models
 
 
@@ -10,6 +11,7 @@ class Roll(models.Model):
 
 
 class DiceSequence(models.Model):
+    uuid = models.UUIDField(primary_key=False, default=uuid.uuid4, editable=True, unique=True)
     seq_name = models.CharField(max_length=256)
     created = models.DateTimeField(auto_now_add=True)
     owner = models.ForeignKey('auth.User',  related_name='dice_sequence', on_delete=models.CASCADE)
