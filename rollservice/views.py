@@ -8,6 +8,7 @@ from rest_framework import generics
 from rest_framework import renderers
 from rest_framework.reverse import reverse
 from rest_framework import permissions
+from rest_framework import status
 
 from rollservice.models import DiceSequence
 from rollservice.models import RollSequence
@@ -42,7 +43,12 @@ class DiceSequenceByUUID(generics.RetrieveAPIView):
     lookup_field = 'uuid'
 
     def get(self, request, uuid, format=None):
-        entry = self.get_queryset().get(uuid__exact=uuid)
+        try:
+            entry = self.get_queryset().get(uuid__exact=uuid)
+        except:
+            content = { 'uuid': uuid, 'message': 'Not Found' }
+            return Response(content, status=status.HTTP_404_NOT_FOUND)
+
         owner = entry.owner
         seq_name = entry.seq_name
         dice_sequence = [dice.sides for dice in entry.sequence.all()]
