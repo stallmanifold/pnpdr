@@ -45,9 +45,7 @@ class DiceSequenceSerializer(serializers.Serializer):
         dice_sequence.sequence.set(dice_saved)
         uuid = dice_sequence.uuid
 
-        data = DiceSequenceData(uuid, owner, seq_name, values)
-
-        return data
+        return DiceSequenceData(uuid, owner, seq_name, values)
 
 
 class RollSequenceSerializer(serializers.HyperlinkedModelSerializer):
@@ -60,7 +58,7 @@ class RollSequenceSerializer(serializers.HyperlinkedModelSerializer):
 
 
 class UserSerializer(serializers.HyperlinkedModelSerializer):
-    dice_sequence = serializers.HyperlinkedIdentityField(many=True, view_name='dice-seq', read_only=True)
+    dice_sequence = serializers.HyperlinkedIdentityField(many=True, view_name='dice-seq-by-uuid', read_only=True)
 
     class Meta:
         model = User
