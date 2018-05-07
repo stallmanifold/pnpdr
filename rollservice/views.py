@@ -86,14 +86,14 @@ class DiceSequenceListByUUIDView(generics.ListAPIView):
 
         uuid_list = [uuid.UUID(entry) for entry in uuid_list]
         entries_found = self.get_queryset().filter(uuid__in=uuid_list)
+        uuids_found = [entry.uuid for entry in entries_found]
+        uuids_missing = [entry for entry in uuid_list if entry not in uuids_found]
         data = (
             DiceSequenceData(
                 entry.uuid, entry.seq_name, entry.owner, [dice.sides for dice in entry.sequence.all()]
             )
             for entry in entries_found
         )
-        uuids_found = [entry.uuid for entry in entries_found]
-        uuids_missing = [entry for entry in uuid_list if entry not in uuids_found]
         
         if (uuid_list != []) and (len(uuids_missing) == len(uuid_list)):
             content = { 'message': 'Not Found', 'uuids_missing': uuids_missing }
