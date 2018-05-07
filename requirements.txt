@@ -1,2 +1,4 @@
 djangorestframework
 coreapi
+hypothesis
+pytest
