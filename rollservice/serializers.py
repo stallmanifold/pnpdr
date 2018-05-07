@@ -25,7 +25,7 @@ class DiceSequenceSerializer(serializers.Serializer):
     owner = serializers.ReadOnlyField(source='owner.username')
     seq_name = serializers.CharField(max_length=256)
     dice_sequence = serializers.ListField(child=serializers.IntegerField())
-    url = serializers.HyperlinkedIdentityField(lookup_field='uuid', view_name='dice-seq-by-uuid')
+    url = serializers.HyperlinkedIdentityField(lookup_field='uuid', view_name='dice-seq-by-uuid', read_only=True)
 
     class Meta:
         model = DiceSequence
@@ -55,11 +55,11 @@ class RollSequenceSerializer(serializers.HyperlinkedModelSerializer):
 
 
 class UserSerializer(serializers.HyperlinkedModelSerializer):
-    dice_sequence = serializers.HyperlinkedIdentityField(many=True, view_name='dice-seq-by-uuid', read_only=True)
+    url = serializers.HyperlinkedIdentityField(view_name='user-detail', read_only=True)
 
     class Meta:
         model = User
-        fields = ('url', 'id', 'username', 'dice_sequence')
+        fields = ('url', 'id', 'username')
 
 
 class HistorySerializer(serializers.HyperlinkedModelSerializer):
