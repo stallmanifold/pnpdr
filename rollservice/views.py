@@ -94,6 +94,11 @@ class DiceSequenceListByUUIDView(generics.ListAPIView):
         )
         uuids_found = [entry.uuid for entry in entries_found]
         uuids_missing = [entry for entry in uuid_list if entry not in uuids_found]
+        
+        if (uuid_list != []) and (len(uuids_missing) == len(uuid_list)):
+            content = { 'message': 'Not Found', 'uuids_missing': uuids_missing }
+            return Response(content, status=status.HTTP_404_NOT_FOUND)
+
         serializer = DiceSequenceSerializer(data, many=True, context={'request': request})
 
         content = { 'message': 'UUID Search Results', 'uuids_found': serializer.data, 'uuids_missing': uuids_missing }
