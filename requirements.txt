@@ -1,4 +1,5 @@
 djangorestframework
 coreapi
 hypothesis
+hypothesis[django]
 pytest
