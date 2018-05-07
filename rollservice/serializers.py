@@ -12,8 +12,16 @@ class DiceSequenceData:
         self.dice_sequence = dice_sequence
 
 
+class DiceSequenceListByUUIDSerializer(serializers.ModelSerializer):
+    uuids = serializers.ListField(child=serializers.UUIDField())
+
+    class Meta:
+        model = DiceSequence
+        fields = ('uuids',)
+
+
 class DiceSequenceSerializer(serializers.Serializer):
-    uuid = serializers.UUIDField()
+    uuid = serializers.UUIDField(read_only=True)
     owner = serializers.ReadOnlyField(source='owner.username')
     seq_name = serializers.CharField(max_length=256)
     dice_sequence = serializers.ListField(child=serializers.IntegerField())

@@ -15,7 +15,7 @@ urlpatterns = format_suffix_patterns([
     ),
     url(r'^dice_seq/by_uuid/$', 
         views.DiceSequenceListByUUIDView.as_view(),
-        name='dice-seq-by-uuid'
+        name='dice-seq-list-by-uuid'
     ),
     url(r'^dice_seq/$', 
         views.DiceSequenceListView.as_view(),
