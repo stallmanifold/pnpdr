@@ -13,11 +13,11 @@ class DiceSequenceData:
 
 
 class DiceSequenceListByUUIDSerializer(serializers.ModelSerializer):
-    uuids = serializers.ListField(child=serializers.UUIDField())
+    uuid_list = serializers.ListField(child=serializers.UUIDField())
 
     class Meta:
         model = DiceSequence
-        fields = ('uuids',)
+        fields = ('uuid_list',)
 
 
 class DiceSequenceSerializer(serializers.Serializer):

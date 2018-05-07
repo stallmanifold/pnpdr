@@ -77,7 +77,12 @@ class DiceSequenceListByUUIDView(generics.ListAPIView):
     ])
 
     def get(self, request, *args, **kwargs):
-        uuid_list = request.data['uuid_list'] if 'uuid_list' in request.data else []
+        try:
+            uuid_list = request.data['uuid_list']
+        except:
+            content = { 'message': 'Missing required parameters', 'missing parameters': ['uuid_list'] }
+            return Response(content, status=status.HTTP_400_BAD_REQUEST)
+
         return Response({'message': 'Request received', 'uuid_list': uuid_list, 'uuids received': len(uuid_list)})
 
 
