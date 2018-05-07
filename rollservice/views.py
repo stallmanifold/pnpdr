@@ -1,5 +1,6 @@
 import coreapi
 import coreschema
+import uuid
 
 from django.contrib.auth.models import User
 
@@ -83,7 +84,20 @@ class DiceSequenceListByUUIDView(generics.ListAPIView):
             content = { 'message': 'Missing required parameters', 'missing parameters': ['uuid_list'] }
             return Response(content, status=status.HTTP_400_BAD_REQUEST)
 
-        return Response({'message': 'Request received', 'uuid_list': uuid_list, 'uuids received': len(uuid_list)})
+        uuid_list = [uuid.UUID(entry) for entry in uuid_list]
+        entries_found = self.get_queryset().filter(uuid__in=uuid_list)
+        data = (
+            DiceSequenceData(
+                entry.uuid, entry.seq_name, entry.owner, [dice.sides for dice in entry.sequence.all()]
+            )
+            for entry in entries_found
+        )
+        uuids_found = [entry.uuid for entry in entries_found]
+        uuids_missing = [entry for entry in uuid_list if entry not in uuids_found]
+        serializer = DiceSequenceSerializer(data, many=True, context={'request': request})
+
+        content = { 'message': 'UUID Search Results', 'uuids_found': serializer.data, 'uuids_missing': uuids_missing }
+        return Response(content)
 
 
 class DiceSequenceListView(generics.ListCreateAPIView):
