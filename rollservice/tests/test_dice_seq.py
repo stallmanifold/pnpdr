@@ -119,5 +119,5 @@ class DiceSequenceByUUIDTests(hypothesis.extra.django.TestCase):
         response1 = self.client.get(url)
         response2 = self.client.get(url)
 
-        self.assertEqual(response1.status_code, response1.status_code)
+        self.assertEqual(response1.status_code, response2.status_code)
 
