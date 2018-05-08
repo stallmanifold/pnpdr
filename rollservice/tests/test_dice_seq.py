@@ -71,10 +71,16 @@ class DiceSeqTests(rf_test.APITestCase):
         self.queryset = DiceSequence.objects.all()
 
 
-    def test_dice_seq_by_uuid_should_return_successfully(self):
+    def test_dice_seq_by_uuid_with_existing_uuid_should_return_successfully(self):
         uuid = DiceSeqStrategies.existing_uuid().example()
         url = reverse.reverse('dice-seq-by-uuid', kwargs={'uuid': uuid['uuid']})
         response = self.client.get(url)
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
+    def test_dice_seq_by_uuid_with_non_existing_uuid_should_return_not_found(self):
+        uuid = DiceSeqStrategies.non_existing_uuid().example()
+        url = reverse.reverse('dice-seq-by-uuid', kwargs={'uuid': uuid['uuid']})
+        response = self.client.get(url)
+
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
