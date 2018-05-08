@@ -50,6 +50,15 @@ class DiceSeqStrategies:
     invalid_uuid = strategies.text(max_size=100)
 
     @strategies.composite
+    def existing_uuid_url(draw, queryset):
+        max_value = len(queryset) - 1
+        index = draw(strategies.integers(min_value=0, max_value=max_value))
+        uuid = queryset[index].uuid
+        url = reverse.reverse('dice-seq-by-uuid', args=[uuid])
+        
+        return url
+
+    @strategies.composite
     def invalid_uuid_url(draw, invalid_uuid=invalid_uuid):
         uuid = draw(invalid_uuid)
         url_root = reverse.reverse('dice-seq')
@@ -73,9 +82,8 @@ class DiceSeqTests(hypothesis.extra.django.TestCase):
     client_class = rf_test.APIClient
 
 
-    @hypothesis.given(DiceSeqStrategies.existing_uuid(queryset=queryset))
-    def test_dice_seq_by_uuid_with_existing_uuid_should_return_successfully(self, uuid):
-        url = reverse.reverse('dice-seq-by-uuid', kwargs={'uuid': uuid})
+    @hypothesis.given(DiceSeqStrategies.existing_uuid_url(queryset=queryset))
+    def test_dice_seq_by_uuid_with_existing_uuid_should_return_successfully(self, url):
         response = self.client.get(url)
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
