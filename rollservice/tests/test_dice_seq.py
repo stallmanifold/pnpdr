@@ -90,25 +90,27 @@ class DiceSeqTests(hypothesis.extra.django.TestCase):
 
 
     @hypothesis.given(DiceSeqStrategies.existing_uuid_url(queryset=queryset))
-    def test_dice_seq_by_uuid_GET_with_existing_uuid_should_return_ok(self, url):
+    def test_dice_seq_by_uuid_GET_with_existing_uuid_should_return_OK(self, url):
         response = self.client.get(url)
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
 
     @hypothesis.given(DiceSeqStrategies.non_existing_uuid_url(queryset=queryset))
-    def test_dice_seq_by_uuid_GET_with_non_existing_uuid_should_return_not_found(self, url):
+    def test_dice_seq_by_uuid_GET_with_non_existing_uuid_should_return_NOT_FOUND(self, url):
         response = self.client.get(url)
 
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
 
     @hypothesis.given(DiceSeqStrategies.invalid_uuid_url())
-    def test_dice_seq_by_uuid_GET_with_invalid_uuid_should_return_bad_request(self, url):
+    def test_dice_seq_by_uuid_GET_with_invalid_uuid_should_return_BAD_REQUEST(self, url):
         response = self.client.get(url)
 
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
+
+    @hypothesis.reproduce_failure('3.56.5', b'AAIBAA0A')
     @hypothesis.given(strategies.one_of([
         DiceSeqStrategies.existing_uuid_url(queryset=queryset), 
         DiceSeqStrategies.non_existing_uuid_url(queryset=queryset),
