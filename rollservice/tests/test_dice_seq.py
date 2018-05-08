@@ -59,6 +59,13 @@ class DiceSeqStrategies:
         return url
 
     @strategies.composite
+    def non_existing_uuid_url(draw, queryset, non_existing_uuid=non_existing_uuid):
+        uuid = draw(non_existing_uuid)
+        url = reverse.reverse('dice-seq-by-uuid', args=[uuid])
+        
+        return url
+
+    @strategies.composite
     def invalid_uuid_url(draw, invalid_uuid=invalid_uuid):
         uuid = draw(invalid_uuid)
         url_root = reverse.reverse('dice-seq')
@@ -89,9 +96,8 @@ class DiceSeqTests(hypothesis.extra.django.TestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
 
-    @hypothesis.given(DiceSeqStrategies.non_existing_uuid)
-    def test_dice_seq_by_uuid_with_non_existing_uuid_should_return_not_found(self, uuid):
-        url = reverse.reverse('dice-seq-by-uuid', kwargs={'uuid': uuid})
+    @hypothesis.given(DiceSeqStrategies.non_existing_uuid_url(queryset=queryset))
+    def test_dice_seq_by_uuid_with_non_existing_uuid_should_return_not_found(self, url):
         response = self.client.get(url)
 
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
