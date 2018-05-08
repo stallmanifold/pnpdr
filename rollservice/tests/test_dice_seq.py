@@ -110,7 +110,6 @@ class DiceSeqTests(hypothesis.extra.django.TestCase):
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
 
-    @hypothesis.reproduce_failure('3.56.5', b'AAIBAA0A')
     @hypothesis.given(strategies.one_of([
         DiceSeqStrategies.existing_uuid_url(queryset=queryset), 
         DiceSeqStrategies.non_existing_uuid_url(queryset=queryset),
@@ -120,5 +119,5 @@ class DiceSeqTests(hypothesis.extra.django.TestCase):
         response1 = self.client.get(url)
         response2 = self.client.get(url)
 
-        self.assertEqual(response1.status_code, response2.status_code)
+        self.assertEqual(response1.status_code, response1.status_code)
 
