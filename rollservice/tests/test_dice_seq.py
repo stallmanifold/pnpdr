@@ -37,7 +37,7 @@ class DiceSeqStrategies:
             dice_sequence = dice_sequence
         )
 
-    dice_sequence_list = strategies.lists(elements=dice_sequence())
+    dice_sequence_list = strategies.lists(elements=dice_sequence(), min_size=1)
 
     @strategies.composite
     def existing_uuid(draw, queryset):
