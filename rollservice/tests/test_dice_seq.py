@@ -74,7 +74,7 @@ class DiceSeqStrategies:
         return url
 
 
-class DiceSeqTests(hypothesis.extra.django.TestCase):
+class DiceSequenceByUUIDTests(hypothesis.extra.django.TestCase):
     @classmethod
     def setUpTestData(cls):
         sequences = DiceSeqStrategies.dice_sequence_list.example()
