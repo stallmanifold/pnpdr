@@ -42,14 +42,14 @@ class DiceSeqStrategies:
 
     @strategies.composite
     def existing_uuid(draw, queryset=DiceSequence.objects.all()):
-        max_value = len(queryset)
+        max_value = len(queryset) - 1
         index = draw(strategies.integers(min_value=0, max_value=max_value))
         uuid = queryset[index].uuid
         
         return dict(uuid = uuid, exists = True, valid_uuid = False)
 
     @strategies.composite
-    def nonexisting_uuid(draw):
+    def non_existing_uuid(draw):
         return dict(uuid = draw(strategies.uuids()), exists = False, valid_uuid = False)
 
     @strategies.composite
@@ -72,10 +72,8 @@ class DiceSeqTests(rf_test.APITestCase):
 
 
     def test_dice_seq_by_uuid_should_return_successfully(self):
-        uuid = strategies.one_of([
-            DiceSeqStrategies.existing_uuid(), DiceSeqStrategies.nonexisting_uuid()
-        ]).example()
-        url = reverse.reverse('dice-seq-by-uuid', uuid)
+        uuid = DiceSeqStrategies.existing_uuid().example()
+        url = reverse.reverse('dice-seq-by-uuid', kwargs={'uuid': uuid['uuid']})
         response = self.client.get(url)
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
