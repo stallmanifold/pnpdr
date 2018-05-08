@@ -17,9 +17,9 @@ class DiceSeqStrategies:
     )
 
     user = strategies.just(dict(
-        username = 'dungeon_master',
-        email = 'dungeon_master@testserver.local',
-        password = 'password123'
+        username='dungeon_master',
+        email='dungeon_master@testserver.local',
+        password='password123'
     ))
 
     @strategies.composite
@@ -33,8 +33,8 @@ class DiceSeqStrategies:
         dice_sequence = draw(dice_rolls)
 
         return dict(
-            seq_name = seq_name,
-            dice_sequence = dice_sequence
+            seq_name=seq_name,
+            dice_sequence=dice_sequence
         )
 
     dice_sequence_list = strategies.lists(elements=dice_sequence(), min_size=1)
@@ -95,7 +95,7 @@ class DiceSequenceByUUIDTests(hypothesis.extra.django.TestCase):
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
-
+    
     @hypothesis.given(DiceSeqStrategies.non_existing_uuid_url(queryset=queryset))
     def test_dice_seq_by_uuid_GET_with_non_existing_uuid_should_return_NOT_FOUND(self, url):
         response = self.client.get(url)

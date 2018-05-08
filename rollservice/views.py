@@ -1,15 +1,12 @@
 import coreapi
 import coreschema
-import uuid
+import uuid as mod_uuid
 
 from django.contrib.auth.models import User
 
-from rest_framework.views import APIView
 from rest_framework.decorators import api_view
-from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework import generics
-from rest_framework import renderers
 from rest_framework.reverse import reverse
 from rest_framework import permissions
 from rest_framework import status
@@ -43,7 +40,8 @@ class DiceSequenceByUUIDView(generics.RetrieveAPIView):
 
     def get(self, request, uuid, format=None):
         try:
-            entry = self.get_queryset().get(uuid__exact=uuid)
+            validated_uuid = mod_uuid.UUID(uuid)
+            entry = self.get_queryset().get(uuid__exact=validated_uuid)
         except DiceSequence.DoesNotExist:
             content = { 'uuid': uuid, 'message': 'Resource does not exist' }
             return Response(content, status=status.HTTP_404_NOT_FOUND)
@@ -84,7 +82,7 @@ class DiceSequenceListByUUIDView(generics.ListAPIView):
             content = { 'message': 'Missing required parameters', 'missing parameters': ['uuid_list'] }
             return Response(content, status=status.HTTP_400_BAD_REQUEST)
 
-        uuid_list = [uuid.UUID(entry) for entry in uuid_list]
+        uuid_list = [mod_uuid.UUID(entry) for entry in uuid_list]
         entries_found = self.get_queryset().filter(uuid__in=uuid_list)
         uuids_found = [entry.uuid for entry in entries_found]
         uuids_missing = [entry for entry in uuid_list if entry not in uuids_found]
