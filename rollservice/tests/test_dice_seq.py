@@ -84,3 +84,11 @@ class DiceSeqTests(rf_test.APITestCase):
         response = self.client.get(url)
 
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+    def test_dice_seq_by_uuid_with_non_existing_uuid_should_return_not_found(self):
+        uuid = DiceSeqStrategies.invalid_uuid().example()
+        url = reverse.reverse('dice-seq-by-uuid', kwargs={'uuid': uuid['uuid']})
+        response = self.client.get(url)
+
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
