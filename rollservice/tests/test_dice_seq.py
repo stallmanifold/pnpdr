@@ -6,7 +6,7 @@ import rest_framework.test    as rf_test
 import rest_framework.status  as status
 import rest_framework.reverse as reverse
 
-import hypothesis
+import hypothesis.extra.django
 import hypothesis.strategies as strategies
 
 
@@ -39,14 +39,13 @@ class DiceSeqStrategies:
 
     dice_sequence_list = strategies.lists(elements=dice_sequence())
 
-
     @strategies.composite
-    def existing_uuid(draw, queryset=DiceSequence.objects.all()):
+    def existing_uuid(draw, queryset):
         max_value = len(queryset) - 1
         index = draw(strategies.integers(min_value=0, max_value=max_value))
-        uuid = queryset[index].uuid
         
-        return dict(uuid = uuid, exists = True, valid_uuid = False)
+        return queryset[index].uuid
+        
 
     @strategies.composite
     def non_existing_uuid(draw):
@@ -59,8 +58,9 @@ class DiceSeqStrategies:
         )
 
 
-class DiceSeqTests(rf_test.APITestCase):
-    def setUp(self):
+class DiceSeqTests(hypothesis.extra.django.TestCase):
+    @classmethod
+    def setUpTestData(cls):
         sequences = DiceSeqStrategies.dice_sequence_list.example()
         new_user = DiceSeqStrategies.user.example()
         owner = User.objects.create(**new_user)
@@ -68,15 +68,18 @@ class DiceSeqTests(rf_test.APITestCase):
             dice_sequence = DiceSequence.objects.create(seq_name=sequence['seq_name'], owner=owner)
             dice_sequence.sequence.set(sequence['dice_sequence'])
         
-        self.queryset = DiceSequence.objects.all()
+    
+    queryset = DiceSequence.objects.all()
+    client_class = rf_test.APIClient
 
 
-    def test_dice_seq_by_uuid_with_existing_uuid_should_return_successfully(self):
-        uuid = DiceSeqStrategies.existing_uuid().example()
-        url = reverse.reverse('dice-seq-by-uuid', kwargs={'uuid': uuid['uuid']})
+    @hypothesis.given(DiceSeqStrategies.existing_uuid(queryset=queryset))
+    def test_dice_seq_by_uuid_with_existing_uuid_should_return_successfully(self, uuid):
+        url = reverse.reverse('dice-seq-by-uuid', kwargs={'uuid': uuid})
         response = self.client.get(url)
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
+
 
     def test_dice_seq_by_uuid_with_non_existing_uuid_should_return_not_found(self):
         uuid = DiceSeqStrategies.non_existing_uuid().example()
@@ -84,6 +87,7 @@ class DiceSeqTests(rf_test.APITestCase):
         response = self.client.get(url)
 
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
 
     def test_dice_seq_by_uuid_with_non_existing_uuid_should_return_not_found(self):
         uuid = DiceSeqStrategies.invalid_uuid().example()
