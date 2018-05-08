@@ -38,7 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
-    'rollservice.apps.RollserviceConfig',
+    'rollservice',
 ]
 
 MIDDLEWARE = [
@@ -120,3 +120,9 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/1.11/howto/static-files/
 
 STATIC_URL = '/static/'
+
+# The allowed hosts. In production we presently set it to be the default.
+# In testing mode, we allow localhost and testserver only.
+if DEBUG:
+    ALLOWED_HOSTS = ['127.0.0.1', 'localhost', 'testserver']
+

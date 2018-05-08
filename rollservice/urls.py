@@ -33,6 +33,6 @@ urlpatterns = format_suffix_patterns([
         views.UserDetailView.as_view(), 
         name='user-detail'
     ),
-    url(r'^schema/$', schema_view),
+    url(r'^schema/$', schema_view, name='schema'),
 ])
 
