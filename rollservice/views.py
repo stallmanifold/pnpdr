@@ -41,13 +41,15 @@ class DiceSequenceByUUIDView(generics.RetrieveAPIView):
     def get(self, request, uuid, format=None):
         try:
             validated_uuid = mod_uuid.UUID(uuid)
+        except ValueError:
+            content = { 'uuid': uuid, 'message': 'Invalid UUID' }
+            return Response(content, status=status.HTTP_400_BAD_REQUEST)
+
+        try:
             entry = self.get_queryset().get(uuid__exact=validated_uuid)
         except DiceSequence.DoesNotExist:
             content = { 'uuid': uuid, 'message': 'Resource does not exist' }
             return Response(content, status=status.HTTP_404_NOT_FOUND)
-        except:
-            content = { 'uuid': uuid, 'message': 'Invalid UUID' }
-            return Response(content, status=status.HTTP_400_BAD_REQUEST)
 
         owner = entry.owner
         seq_name = entry.seq_name
@@ -55,7 +57,8 @@ class DiceSequenceByUUIDView(generics.RetrieveAPIView):
         data = DiceSequenceData(uuid, owner, seq_name, dice_sequence)
 
         serializer = DiceSequenceSerializer(data, context={'request': request})
-
+        import sys
+        print(serializer, file=sys.stderr)
         return Response(serializer.data)
 
 

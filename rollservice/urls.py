@@ -9,7 +9,7 @@ schema_view = get_schema_view(title='PNP Die Roller API')
 
 urlpatterns = format_suffix_patterns([
     url(r'^$', views.api_root),
-    url(r'^dice_seq/by_uuid/(?P<uuid>[\-a-z0-9]+)/$', 
+    url(r'^dice_seq/by_uuid/(?P<uuid>[\-a-zA-Z0-9]+)/$', 
         views.DiceSequenceByUUIDView.as_view(),
         name='dice-seq-by-uuid'
     ),
