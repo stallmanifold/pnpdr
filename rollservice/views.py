@@ -57,8 +57,7 @@ class DiceSequenceByUUIDView(generics.RetrieveAPIView):
         data = DiceSequenceData(uuid, owner, seq_name, dice_sequence)
 
         serializer = DiceSequenceSerializer(data, context={'request': request})
-        import sys
-        print(serializer, file=sys.stderr)
+
         return Response(serializer.data)
 
 

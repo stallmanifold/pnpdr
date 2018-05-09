@@ -71,7 +71,7 @@ class DiceSeqStrategies:
     def invalid_uuid_url(draw, invalid_uuid=invalid_uuid):
         uuid = draw(invalid_uuid)
         url_root = reverse.reverse('dice-seq')
-        url = url_root + uuid + '/'
+        url = url_root + '/by_uuid/' + uuid + '/'
 
         return url
 
@@ -112,7 +112,6 @@ class DiceSequenceByUUIDTests(hypothesis.extra.django.TestCase):
         self.assertIn(response.status_code, [status.HTTP_404_NOT_FOUND, status.HTTP_400_BAD_REQUEST])
 
 
-    @unittest.skip
     @hypothesis.given(strategies.one_of([
         DiceSeqStrategies.existing_uuid_url(queryset=queryset), 
         DiceSeqStrategies.non_existing_uuid_url(queryset=queryset),
